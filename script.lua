@@ -49,6 +49,7 @@ local KEYS = {
 }
 
 local guiVisible   = true
+local settingsPanel = nil
 local isStealing   = false
 local lastSteal    = 0
 local Connections  = {}
@@ -556,7 +557,7 @@ local mS = Instance.new("UIStroke", menuBtn); mS.Color = C.border; mS.Thickness 
 menuBtn.MouseButton1Click:Connect(function()
     guiVisible = not guiVisible
     leftPanel.Visible = guiVisible
-    settingsPanel.Visible = false
+    if settingsPanel then settingsPanel.Visible = false end
 end)
 
 -- Left panel buttons
