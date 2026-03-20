@@ -3,18 +3,12 @@
 -- ║              Steal a Brainrot Duels                          ║
 -- ║              discord.gg/U4XXCxKUm                            ║
 -- ╚══════════════════════════════════════════════════════════════╝
-
 repeat task.wait() until game:IsLoaded()
-
 local Players          = game:GetService("Players")
 local RunService       = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService     = game:GetService("TweenService")
 local Player           = Players.LocalPlayer
-
--- ──────────────────────────────────────────────────────────────
--- CONFIG
--- ──────────────────────────────────────────────────────────────
 local Config = {
     Speed        = 60,
     StealSpeed   = 29,
@@ -22,7 +16,6 @@ local Config = {
     SpinSpeed    = 50,
     StealRadius  = 25,
 }
-
 local Toggles = {
     AutoLeft    = false,
     AutoRight   = false,
@@ -35,7 +28,6 @@ local Toggles = {
     AntiRagdoll = false,
     NoAnim      = false,
 }
-
 local KB = {
     AutoLeft    = Enum.KeyCode.Q,
     AutoRight   = Enum.KeyCode.E,
@@ -49,7 +41,6 @@ local KB = {
     Ungrab      = Enum.KeyCode.C,
     ToggleUI    = Enum.KeyCode.U,
 }
-
 local Connections = {}
 local floatY      = nil
 local floatConn   = nil
@@ -59,25 +50,18 @@ local lastGrab    = 0
 local leftPhase   = 1
 local rightPhase  = 1
 local guiVisible  = true
-
--- ──────────────────────────────────────────────────────────────
--- HELPERS
--- ──────────────────────────────────────────────────────────────
 local function getHRP()
     local c = Player.Character
     return c and c:FindFirstChild("HumanoidRootPart")
 end
-
 local function getHum()
     local c = Player.Character
     return c and c:FindFirstChildOfClass("Humanoid")
 end
-
 local function getMoveDir()
     local h = getHum()
     return h and h.MoveDirection or Vector3.zero
 end
-
 local function isMyPlot(name)
     local plots = workspace:FindFirstChild("Plots")
     if not plots then return false end
@@ -90,10 +74,6 @@ local function isMyPlot(name)
     end
     return false
 end
-
--- ──────────────────────────────────────────────────────────────
--- SPEED
--- ──────────────────────────────────────────────────────────────
 RunService.Heartbeat:Connect(function()
     local hrp = getHRP()
     local hum = getHum()
@@ -112,10 +92,6 @@ RunService.Heartbeat:Connect(function()
         hrp.AssemblyLinearVelocity = Vector3.new(md.X * spd, hrp.AssemblyLinearVelocity.Y, md.Z * spd)
     end
 end)
-
--- ──────────────────────────────────────────────────────────────
--- FLOAT
--- ──────────────────────────────────────────────────────────────
 local function startFloat()
     local hrp = getHRP()
     if not hrp then return end
@@ -131,14 +107,9 @@ local function startFloat()
         end
     end)
 end
-
 local function stopFloat()
     if floatConn then floatConn:Disconnect(); floatConn = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- BAT AIMBOT
--- ──────────────────────────────────────────────────────────────
 local function startAimbot()
     if Connections.aim then return end
     Connections.aim = RunService.Heartbeat:Connect(function()
@@ -165,14 +136,9 @@ local function startAimbot()
         end
     end)
 end
-
 local function stopAimbot()
     if Connections.aim then Connections.aim:Disconnect(); Connections.aim = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- SPINBOT
--- ──────────────────────────────────────────────────────────────
 local function startSpinbot()
     local hrp = getHRP()
     if not hrp then return end
@@ -182,14 +148,9 @@ local function startSpinbot()
     spinBAV.AngularVelocity = Vector3.new(0, Config.SpinSpeed, 0)
     spinBAV.Parent = hrp
 end
-
 local function stopSpinbot()
     if spinBAV then spinBAV:Destroy(); spinBAV = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- ANTI RAGDOLL
--- ──────────────────────────────────────────────────────────────
 local function startAntiRagdoll()
     if Connections.ar then return end
     Connections.ar = RunService.Heartbeat:Connect(function()
@@ -207,14 +168,9 @@ local function startAntiRagdoll()
         end
     end)
 end
-
 local function stopAntiRagdoll()
     if Connections.ar then Connections.ar:Disconnect(); Connections.ar = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- NO ANIMATIONS
--- ──────────────────────────────────────────────────────────────
 local function startNoAnim()
     local c = Player.Character
     if not c then return end
@@ -225,20 +181,14 @@ local function startNoAnim()
     local anim = c:FindFirstChild("Animate")
     if anim then savedAnim = anim:Clone(); anim:Destroy() end
 end
-
 local function stopNoAnim()
     local c = Player.Character
     if c and savedAnim then savedAnim:Clone().Parent = c; savedAnim = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- AUTO LEFT / RIGHT
--- ──────────────────────────────────────────────────────────────
 local PL1 = Vector3.new(-476.48, -6.28, 92.73)
 local PL2 = Vector3.new(-483.12, -4.95, 94.80)
 local PR1 = Vector3.new(-476.16, -6.52, 25.62)
 local PR2 = Vector3.new(-483.04, -5.09, 23.14)
-
 local function startAutoLeft()
     if Connections.aL then Connections.aL:Disconnect() end
     leftPhase = 1
@@ -265,14 +215,12 @@ local function startAutoLeft()
         hrp.AssemblyLinearVelocity = Vector3.new(md.X * Config.Speed, hrp.AssemblyLinearVelocity.Y, md.Z * Config.Speed)
     end)
 end
-
 local function stopAutoLeft()
     if Connections.aL then Connections.aL:Disconnect(); Connections.aL = nil end
     local h = getHum()
     if h then h:Move(Vector3.zero, false) end
     Toggles.AutoLeft = false
 end
-
 local function startAutoRight()
     if Connections.aR then Connections.aR:Disconnect() end
     rightPhase = 1
@@ -299,17 +247,12 @@ local function startAutoRight()
         hrp.AssemblyLinearVelocity = Vector3.new(md.X * Config.Speed, hrp.AssemblyLinearVelocity.Y, md.Z * Config.Speed)
     end)
 end
-
 local function stopAutoRight()
     if Connections.aR then Connections.aR:Disconnect(); Connections.aR = nil end
     local h = getHum()
     if h then h:Move(Vector3.zero, false) end
     Toggles.AutoRight = false
 end
-
--- ──────────────────────────────────────────────────────────────
--- INSTANT GRAB
--- ──────────────────────────────────────────────────────────────
 local function findPrompt()
     local hrp = getHRP()
     if not hrp then return nil end
@@ -340,7 +283,6 @@ local function findPrompt()
     end
     return np
 end
-
 local function startInstantGrab()
     if Connections.grab then return end
     Connections.grab = RunService.Heartbeat:Connect(function()
@@ -355,14 +297,9 @@ local function startInstantGrab()
         end
     end)
 end
-
 local function stopInstantGrab()
     if Connections.grab then Connections.grab:Disconnect(); Connections.grab = nil end
 end
-
--- ──────────────────────────────────────────────────────────────
--- TP TO BRAINROT
--- ──────────────────────────────────────────────────────────────
 local function tpToBrainrot()
     local hrp = getHRP()
     if not hrp then return end
@@ -398,28 +335,20 @@ local function tpToBrainrot()
         hrp.CFrame = CFrame.new(best:GetPivot().Position + Vector3.new(0, 5, 0))
     end
 end
-
--- ──────────────────────────────────────────────────────────────
--- GUI
--- ──────────────────────────────────────────────────────────────
 local sg = Instance.new("ScreenGui")
 sg.Name = "AlamHub"
 sg.ResetOnSpawn = false
 sg.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 sg.Parent = Player:FindFirstChildOfClass("PlayerGui") or Player.PlayerGui
-
 local BG   = Color3.fromRGB(10, 13, 20)
 local CARD = Color3.fromRGB(18, 22, 32)
 local BLUE = Color3.fromRGB(0, 180, 255)
 local WHT  = Color3.fromRGB(255, 255, 255)
 local GRY  = Color3.fromRGB(50, 65, 90)
 local DGRY = Color3.fromRGB(22, 28, 42)
-
 local function tw(obj, props, t)
     TweenService:Create(obj, TweenInfo.new(t or 0.15), props):Play()
 end
-
--- ICON BUTTON
 local iconBtn = Instance.new("TextButton", sg)
 iconBtn.Size = UDim2.new(0, 52, 0, 52)
 iconBtn.Position = UDim2.new(0, 8, 0.38, 0)
@@ -432,8 +361,6 @@ iconBtn.BorderSizePixel = 0
 iconBtn.ZIndex = 100
 Instance.new("UICorner", iconBtn).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", iconBtn).Color = BLUE
-
--- MAIN FRAME
 local main = Instance.new("Frame", sg)
 main.Size = UDim2.new(0, 360, 0, 560)
 main.Position = UDim2.new(0.5, -180, 0.5, -280)
@@ -446,8 +373,6 @@ main.ClipsDescendants = true
 main.ZIndex = 10
 Instance.new("UICorner", main).CornerRadius = UDim.new(0, 16)
 Instance.new("UIStroke", main).Color = BLUE
-
--- TITLE
 local titleLbl = Instance.new("TextLabel", main)
 titleLbl.Size = UDim2.new(1, 0, 0, 38)
 titleLbl.BackgroundTransparency = 1
@@ -456,15 +381,12 @@ titleLbl.TextColor3 = BLUE
 titleLbl.Font = Enum.Font.GothamBlack
 titleLbl.TextSize = 20
 titleLbl.ZIndex = 11
-
 local divLine = Instance.new("Frame", main)
 divLine.Size = UDim2.new(1, -20, 0, 1)
 divLine.Position = UDim2.new(0, 10, 0, 38)
 divLine.BackgroundColor3 = BLUE
 divLine.BorderSizePixel = 0
 divLine.ZIndex = 11
-
--- TAB BAR
 local tabBar = Instance.new("Frame", main)
 tabBar.Size = UDim2.new(1, -16, 0, 34)
 tabBar.Position = UDim2.new(0, 8, 0, 44)
@@ -472,10 +394,8 @@ tabBar.BackgroundColor3 = DGRY
 tabBar.BorderSizePixel = 0
 tabBar.ZIndex = 11
 Instance.new("UICorner", tabBar).CornerRadius = UDim.new(0, 8)
-
 local TABS = {"FEATURES", "KEYBINDS", "SETTINGS"}
 local tabBtns = {}
-
 local tabInd = Instance.new("Frame", tabBar)
 tabInd.Size = UDim2.new(0, 116, 1, -4)
 tabInd.Position = UDim2.new(0, 2, 0, 2)
@@ -483,7 +403,6 @@ tabInd.BackgroundColor3 = BLUE
 tabInd.BorderSizePixel = 0
 tabInd.ZIndex = 11
 Instance.new("UICorner", tabInd).CornerRadius = UDim.new(0, 6)
-
 for i, name in ipairs(TABS) do
     local btn = Instance.new("TextButton", tabBar)
     btn.Size = UDim2.new(0, 116, 1, 0)
@@ -496,14 +415,11 @@ for i, name in ipairs(TABS) do
     btn.ZIndex = 12
     tabBtns[name] = btn
 end
-
--- CONTENT AREA
 local contentArea = Instance.new("Frame", main)
 contentArea.Size = UDim2.new(1, -16, 1, -88)
 contentArea.Position = UDim2.new(0, 8, 0, 84)
 contentArea.BackgroundTransparency = 1
 contentArea.ZIndex = 11
-
 local function mkScroll()
     local p = Instance.new("ScrollingFrame", contentArea)
     p.Size = UDim2.new(1, 0, 1, 0)
@@ -521,13 +437,10 @@ local function mkScroll()
     Instance.new("UIPadding", p).PaddingBottom = UDim.new(0, 10)
     return p
 end
-
 local featPanel = mkScroll(); featPanel.Visible = true
 local kbPanel   = mkScroll()
 local setPanel  = mkScroll()
-
 local panels = {FEATURES = featPanel, KEYBINDS = kbPanel, SETTINGS = setPanel}
-
 local function switchTab(name)
     for n, p in pairs(panels) do p.Visible = (n == name) end
     for n, b in pairs(tabBtns) do b.TextColor3 = (n == name) and WHT or GRY end
@@ -535,14 +448,10 @@ local function switchTab(name)
     for i, t in ipairs(TABS) do if t == name then idx = i - 1; break end end
     tw(tabInd, {Position = UDim2.new(0, 2 + idx * 118, 0, 2)})
 end
-
 for name, btn in pairs(tabBtns) do
     btn.MouseButton1Click:Connect(function() switchTab(name) end)
 end
-
--- FEATURE ROW FACTORY
 local featOrder = 0
-
 local function mkRow(label, tKey, onFn, offFn)
     featOrder = featOrder + 1
     local row = Instance.new("Frame", featPanel)
@@ -553,7 +462,6 @@ local function mkRow(label, tKey, onFn, offFn)
     row.ZIndex = 13
     row.LayoutOrder = featOrder
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
-
     local lbl = Instance.new("TextLabel", row)
     lbl.Size = UDim2.new(1, -58, 1, 0)
     lbl.Position = UDim2.new(0, 14, 0, 0)
@@ -564,7 +472,6 @@ local function mkRow(label, tKey, onFn, offFn)
     lbl.TextSize = 13
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.ZIndex = 14
-
     local tb = Instance.new("Frame", row)
     tb.Size = UDim2.new(0, 44, 0, 22)
     tb.Position = UDim2.new(1, -52, 0.5, -11)
@@ -572,7 +479,6 @@ local function mkRow(label, tKey, onFn, offFn)
     tb.BorderSizePixel = 0
     tb.ZIndex = 13
     Instance.new("UICorner", tb).CornerRadius = UDim.new(1, 0)
-
     local knob = Instance.new("Frame", tb)
     knob.Size = UDim2.new(0, 18, 0, 18)
     knob.Position = UDim2.new(0, 3, 0.5, -9)
@@ -580,13 +486,11 @@ local function mkRow(label, tKey, onFn, offFn)
     knob.BorderSizePixel = 0
     knob.ZIndex = 14
     Instance.new("UICorner", knob).CornerRadius = UDim.new(1, 0)
-
     local clk = Instance.new("TextButton", row)
     clk.Size = UDim2.new(1, 0, 1, 0)
     clk.BackgroundTransparency = 1
     clk.Text = ""
     clk.ZIndex = 15
-
     local isOn = false
     local function sv(state)
         isOn = state
@@ -598,7 +502,6 @@ local function mkRow(label, tKey, onFn, offFn)
     end
     clk.MouseButton1Click:Connect(function() sv(not isOn) end)
 end
-
 local function mkBtn(label, cb)
     featOrder = featOrder + 1
     local btn = Instance.new("TextButton", featPanel)
@@ -614,7 +517,6 @@ local function mkBtn(label, cb)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
     btn.MouseButton1Click:Connect(cb)
 end
-
 local function mkSep()
     featOrder = featOrder + 1
     local s = Instance.new("Frame", featPanel)
@@ -624,8 +526,6 @@ local function mkSep()
     s.ZIndex = 13
     s.LayoutOrder = featOrder
 end
-
--- POPULATE FEATURES
 mkRow("Auto Left",    "AutoLeft",    startAutoLeft,    stopAutoLeft)   mkSep()
 mkRow("Auto Right",   "AutoRight",   startAutoRight,   stopAutoRight)  mkSep()
 mkBtn("TP to Brainrot", tpToBrainrot)                                  mkSep()
@@ -641,12 +541,9 @@ mkBtn("TAUNT", function()
     local hum = getHum()
     if hum then hum:UnequipTools() end
 end)
-
--- KEYBINDS TAB
 local kbOrder = 0
 local activeRebind = nil
 local kbDisplays = {}
-
 local function mkKbRow(label, kbKey)
     kbOrder = kbOrder + 1
     local row = Instance.new("Frame", kbPanel)
@@ -657,7 +554,6 @@ local function mkKbRow(label, kbKey)
     row.ZIndex = 13
     row.LayoutOrder = kbOrder
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
-
     local kv = KB[kbKey]
     local badge = Instance.new("TextButton", row)
     badge.Size = UDim2.new(0, 42, 0, 42)
@@ -671,7 +567,6 @@ local function mkKbRow(label, kbKey)
     badge.ZIndex = 14
     Instance.new("UICorner", badge).CornerRadius = UDim.new(0, 7)
     kbDisplays[kbKey] = badge
-
     local lbl = Instance.new("TextLabel", row)
     lbl.Size = UDim2.new(1, -56, 1, 0)
     lbl.Position = UDim2.new(0, 54, 0, 0)
@@ -682,13 +577,11 @@ local function mkKbRow(label, kbKey)
     lbl.TextSize = 13
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.ZIndex = 14
-
     badge.MouseButton1Click:Connect(function()
         activeRebind = kbKey
         badge.Text = "..."
         badge.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
     end)
-
     kbOrder = kbOrder + 1
     local sep = Instance.new("Frame", kbPanel)
     sep.Size = UDim2.new(1, 0, 0, 1)
@@ -697,7 +590,6 @@ local function mkKbRow(label, kbKey)
     sep.ZIndex = 13
     sep.LayoutOrder = kbOrder
 end
-
 mkKbRow("Auto Left",    "AutoLeft")
 mkKbRow("Auto Right",   "AutoRight")
 mkKbRow("Instant Grab", "InstantGrab")
@@ -709,10 +601,7 @@ mkKbRow("No Anim",      "NoAnim")
 mkKbRow("Spinbot",      "Spinbot")
 mkKbRow("Ungrab",       "Ungrab")
 mkKbRow("Toggle UI",    "ToggleUI")
-
--- SETTINGS TAB
 local setOrder = 0
-
 local function mkSetRow(label, cfgKey, min, max)
     setOrder = setOrder + 1
     local row = Instance.new("Frame", setPanel)
@@ -723,7 +612,6 @@ local function mkSetRow(label, cfgKey, min, max)
     row.ZIndex = 13
     row.LayoutOrder = setOrder
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 8)
-
     local lbl = Instance.new("TextLabel", row)
     lbl.Size = UDim2.new(0.58, 0, 1, 0)
     lbl.Position = UDim2.new(0, 12, 0, 0)
@@ -734,7 +622,6 @@ local function mkSetRow(label, cfgKey, min, max)
     lbl.TextSize = 13
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.ZIndex = 14
-
     local vBox = Instance.new("TextButton", row)
     vBox.Size = UDim2.new(0, 78, 0, 32)
     vBox.Position = UDim2.new(1, -86, 0.5, -16)
@@ -746,7 +633,6 @@ local function mkSetRow(label, cfgKey, min, max)
     vBox.TextSize = 14
     vBox.ZIndex = 14
     Instance.new("UICorner", vBox).CornerRadius = UDim.new(0, 8)
-
     vBox.MouseButton1Click:Connect(function()
         local step = (max - min) / 10
         local cur = Config[cfgKey]
@@ -761,7 +647,6 @@ local function mkSetRow(label, cfgKey, min, max)
             spinBAV.AngularVelocity = Vector3.new(0, Config.SpinSpeed, 0)
         end
     end)
-
     setOrder = setOrder + 1
     local sep = Instance.new("Frame", setPanel)
     sep.Size = UDim2.new(1, 0, 0, 1)
@@ -770,13 +655,11 @@ local function mkSetRow(label, cfgKey, min, max)
     sep.ZIndex = 13
     sep.LayoutOrder = setOrder
 end
-
 mkSetRow("Speed Boost",       "Speed",       0,  150)
 mkSetRow("Speed While Steal", "StealSpeed",  0,  100)
 mkSetRow("Aimbot Speed",      "AimbotSpeed", 10, 200)
 mkSetRow("Spinbot Speed",     "SpinSpeed",   1,  200)
 mkSetRow("Steal Radius",      "StealRadius", 5,  80)
-
 setOrder = setOrder + 1
 local resetBtn = Instance.new("TextButton", setPanel)
 resetBtn.Size = UDim2.new(1, 0, 0, 44)
@@ -796,8 +679,6 @@ resetBtn.MouseButton1Click:Connect(function()
     Config.SpinSpeed   = 50
     Config.StealRadius = 25
 end)
-
--- RIGHT MINI PANEL
 local rp = Instance.new("Frame", sg)
 rp.Size = UDim2.new(0, 150, 0, 172)
 rp.Position = UDim2.new(1, -160, 0.5, -86)
@@ -806,7 +687,6 @@ rp.BorderSizePixel = 0
 rp.ZIndex = 10
 Instance.new("UICorner", rp).CornerRadius = UDim.new(0, 14)
 Instance.new("UIStroke", rp).Color = BLUE
-
 local rpTitle = Instance.new("TextLabel", rp)
 rpTitle.Size = UDim2.new(1, 0, 0, 30)
 rpTitle.BackgroundTransparency = 1
@@ -816,7 +696,6 @@ rpTitle.Font = Enum.Font.GothamBlack
 rpTitle.TextSize = 13
 rpTitle.TextXAlignment = Enum.TextXAlignment.Center
 rpTitle.ZIndex = 11
-
 local rpSub = Instance.new("TextLabel", rp)
 rpSub.Size = UDim2.new(1, 0, 0, 14)
 rpSub.Position = UDim2.new(0, 0, 0, 28)
@@ -827,7 +706,6 @@ rpSub.Font = Enum.Font.Gotham
 rpSub.TextSize = 10
 rpSub.TextXAlignment = Enum.TextXAlignment.Center
 rpSub.ZIndex = 11
-
 local function mkRPBtn(label, yp, cb)
     local btn = Instance.new("TextButton", rp)
     btn.Size = UDim2.new(1, -14, 0, 32)
@@ -842,14 +720,12 @@ local function mkRPBtn(label, yp, cb)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
     btn.MouseButton1Click:Connect(cb)
 end
-
 mkRPBtn("Left Side",  46, function()
     local h = getHRP(); if h then h.CFrame = CFrame.new(PL1) end
 end)
 mkRPBtn("Right Side", 84, function()
     local h = getHRP(); if h then h.CFrame = CFrame.new(PR1) end
 end)
-
 local autoLRon = false
 local alrBtn = Instance.new("TextButton", rp)
 alrBtn.Size = UDim2.new(1, -14, 0, 32)
@@ -860,13 +736,11 @@ alrBtn.Font = Enum.Font.GothamBold
 alrBtn.TextSize = 12
 alrBtn.ZIndex = 11
 Instance.new("UICorner", alrBtn).CornerRadius = UDim.new(0, 8)
-
 local function updateALR()
     alrBtn.Text = "Auto L/R: " .. (autoLRon and "ON" or "OFF")
     alrBtn.TextColor3 = autoLRon and BLUE or GRY
 end
 updateALR()
-
 alrBtn.MouseButton1Click:Connect(function()
     autoLRon = not autoLRon
     if autoLRon then
@@ -876,19 +750,13 @@ alrBtn.MouseButton1Click:Connect(function()
     end
     updateALR()
 end)
-
--- TOGGLE GUI (mobile buttons stay visible!)
 iconBtn.MouseButton1Click:Connect(function()
     guiVisible = not guiVisible
     main.Visible = guiVisible
     rp.Visible = guiVisible
-    -- mobFrame stays visible always
 end)
-
--- INPUT HANDLER
 UserInputService.InputBegan:Connect(function(inp, gpe)
     if gpe then return end
-
     if activeRebind then
         KB[activeRebind] = inp.KeyCode
         if kbDisplays[activeRebind] then
@@ -898,7 +766,6 @@ UserInputService.InputBegan:Connect(function(inp, gpe)
         activeRebind = nil
         return
     end
-
     local k = inp.KeyCode
     if k == KB.ToggleUI    then guiVisible = not guiVisible; main.Visible = guiVisible; rp.Visible = guiVisible end -- mobile buttons stay visible
     if k == KB.AutoLeft    then Toggles.AutoLeft = not Toggles.AutoLeft; if Toggles.AutoLeft then startAutoLeft() else stopAutoLeft() end end
@@ -912,8 +779,6 @@ UserInputService.InputBegan:Connect(function(inp, gpe)
     if k == KB.Spinbot     then Toggles.Spinbot = not Toggles.Spinbot; if Toggles.Spinbot then startSpinbot() else stopSpinbot() end end
     if k == KB.Ungrab      then local hum = getHum(); if hum then hum:UnequipTools() end end
 end)
-
--- RESPAWN
 Player.CharacterAdded:Connect(function()
     task.wait(1)
     if Toggles.AntiRagdoll then stopAntiRagdoll(); task.wait(0.1); startAntiRagdoll() end
@@ -924,11 +789,6 @@ Player.CharacterAdded:Connect(function()
     if Toggles.Spinbot     then startSpinbot() end
     if Toggles.InstantGrab then startInstantGrab() end
 end)
-
-
--- ──────────────────────────────────────────────────────────────
--- MOBILE BUTTONS (always visible)
--- ──────────────────────────────────────────────────────────────
 local function mkMobileBtn(parent, label, x, y, cb)
     local btn = Instance.new("TextButton", parent)
     btn.Size = UDim2.new(0, 70, 0, 70)
@@ -953,16 +813,12 @@ local function mkMobileBtn(parent, label, x, y, cb)
     end)
     return btn
 end
-
 local mobFrame = Instance.new("Frame", sg)
 mobFrame.Size = UDim2.new(1,0,1,0)
 mobFrame.BackgroundTransparency = 1
 mobFrame.ZIndex = 199
-
--- LEFT BUTTONS
 mkMobileBtn(mobFrame, "AUTO
 PLAY", 0.01, 0.22, function()
-    -- Auto Play toggle
 end)
 mkMobileBtn(mobFrame, "PLASMA
 LEFT",  0.01, 0.34, function()
@@ -974,8 +830,6 @@ RIGHT", 0.01, 0.46, function()
     Toggles.AutoRight = not Toggles.AutoRight
     if Toggles.AutoRight then startAutoRight() else stopAutoRight() end
 end)
-
--- RIGHT BUTTONS
 mkMobileBtn(mobFrame, "FLOAT",       0.82, 0.18, function()
     Toggles.Float = not Toggles.Float
     if Toggles.Float then startFloat() else stopFloat() end
@@ -995,6 +849,4 @@ mkMobileBtn(mobFrame, "SPINBOT",     0.84, 0.42, function()
     Toggles.Spinbot = not Toggles.Spinbot
     if Toggles.Spinbot then startSpinbot() else stopSpinbot() end
 end)
-
-
 print("[ALAM HUB] Loaded! discord.gg/U4XXCxKUm | U = Toggle")
