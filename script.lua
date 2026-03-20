@@ -906,6 +906,54 @@ end)
 -- Make all panels draggable
 makeDraggable(rp)
 makeDraggable(iconBtn)
+-- ──────────────────────────────────────────────────────────────
+-- BAT AIMBOT SIDE PANEL
+-- ──────────────────────────────────────────────────────────────
+local batPanel = Instance.new("Frame", sg)
+batPanel.Size = UDim2.new(0,80,0,80)
+batPanel.Position = UDim2.new(0,8,0.65,0)
+batPanel.BackgroundColor3 = Color3.fromRGB(8,12,20)
+batPanel.BackgroundTransparency = 0.1
+batPanel.BorderSizePixel = 0
+batPanel.ZIndex = 10
+Instance.new("UICorner", batPanel).CornerRadius = UDim.new(0,14)
+Instance.new("UIStroke", batPanel).Color = BLUE
+
+local batBtn = Instance.new("TextButton", batPanel)
+batBtn.Size = UDim2.new(1,-8,0,44)
+batBtn.Position = UDim2.new(0,4,0,6)
+batBtn.BackgroundColor3 = Color3.fromRGB(22,28,45)
+batBtn.BorderSizePixel = 0
+batBtn.Text = "BAT
+AIMBOT"
+batBtn.TextColor3 = GRY
+batBtn.Font = Enum.Font.GothamBlack
+batBtn.TextSize = 11
+batBtn.TextWrapped = true
+batBtn.ZIndex = 11
+Instance.new("UICorner", batBtn).CornerRadius = UDim.new(0,8)
+
+local batDot = Instance.new("Frame", batPanel)
+batDot.Size = UDim2.new(0,10,0,10)
+batDot.Position = UDim2.new(0.5,-5,1,-16)
+batDot.BackgroundColor3 = GRY
+batDot.BorderSizePixel = 0
+batDot.ZIndex = 11
+Instance.new("UICorner", batDot).CornerRadius = UDim.new(1,0)
+
+local batOn = false
+batBtn.MouseButton1Click:Connect(function()
+    batOn = not batOn
+    Toggles.BatAimbot = batOn
+    tw(batBtn, {BackgroundColor3 = batOn and BLUE or Color3.fromRGB(22,28,45)})
+    batBtn.TextColor3 = batOn and Color3.fromRGB(5,10,20) or GRY
+    tw(batDot, {BackgroundColor3 = batOn and BLUE or GRY})
+    if batOn then startAimbot() else stopAimbot() end
+end)
+
+makeDraggable(batPanel)
+
+
 
 -- TOGGLE GUI (nur großes Fenster, kleines bleibt!)
 iconBtn.MouseButton1Click:Connect(function()
