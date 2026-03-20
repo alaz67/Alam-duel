@@ -877,11 +877,12 @@ alrBtn.MouseButton1Click:Connect(function()
     updateALR()
 end)
 
--- TOGGLE GUI
+-- TOGGLE GUI (mobile buttons stay visible!)
 iconBtn.MouseButton1Click:Connect(function()
     guiVisible = not guiVisible
     main.Visible = guiVisible
     rp.Visible = guiVisible
+    -- mobFrame stays visible always
 end)
 
 -- INPUT HANDLER
@@ -899,7 +900,7 @@ UserInputService.InputBegan:Connect(function(inp, gpe)
     end
 
     local k = inp.KeyCode
-    if k == KB.ToggleUI    then guiVisible = not guiVisible; main.Visible = guiVisible; rp.Visible = guiVisible end
+    if k == KB.ToggleUI    then guiVisible = not guiVisible; main.Visible = guiVisible; rp.Visible = guiVisible end -- mobile buttons stay visible
     if k == KB.AutoLeft    then Toggles.AutoLeft = not Toggles.AutoLeft; if Toggles.AutoLeft then startAutoLeft() else stopAutoLeft() end end
     if k == KB.AutoRight   then Toggles.AutoRight = not Toggles.AutoRight; if Toggles.AutoRight then startAutoRight() else stopAutoRight() end end
     if k == KB.InstantGrab then Toggles.InstantGrab = not Toggles.InstantGrab; if Toggles.InstantGrab then startInstantGrab() else stopInstantGrab() end end
@@ -923,5 +924,77 @@ Player.CharacterAdded:Connect(function()
     if Toggles.Spinbot     then startSpinbot() end
     if Toggles.InstantGrab then startInstantGrab() end
 end)
+
+
+-- ──────────────────────────────────────────────────────────────
+-- MOBILE BUTTONS (always visible)
+-- ──────────────────────────────────────────────────────────────
+local function mkMobileBtn(parent, label, x, y, cb)
+    local btn = Instance.new("TextButton", parent)
+    btn.Size = UDim2.new(0, 70, 0, 70)
+    btn.Position = UDim2.new(x, 0, y, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(8, 25, 55)
+    btn.BackgroundTransparency = 0.1
+    btn.Text = label
+    btn.TextColor3 = BLUE
+    btn.Font = Enum.Font.GothamBlack
+    btn.TextSize = 11
+    btn.TextWrapped = true
+    btn.BorderSizePixel = 0
+    btn.ZIndex = 200
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(1, 0)
+    local st = Instance.new("UIStroke", btn); st.Color = BLUE; st.Thickness = 2
+    local isOn = false
+    btn.MouseButton1Click:Connect(function()
+        if cb then cb() end
+        isOn = not isOn
+        tw(btn, {BackgroundColor3 = isOn and BLUE or Color3.fromRGB(8,25,55)})
+        btn.TextColor3 = isOn and Color3.fromRGB(5,10,20) or BLUE
+    end)
+    return btn
+end
+
+local mobFrame = Instance.new("Frame", sg)
+mobFrame.Size = UDim2.new(1,0,1,0)
+mobFrame.BackgroundTransparency = 1
+mobFrame.ZIndex = 199
+
+-- LEFT BUTTONS
+mkMobileBtn(mobFrame, "AUTO
+PLAY", 0.01, 0.22, function()
+    -- Auto Play toggle
+end)
+mkMobileBtn(mobFrame, "PLASMA
+LEFT",  0.01, 0.34, function()
+    Toggles.AutoLeft = not Toggles.AutoLeft
+    if Toggles.AutoLeft then startAutoLeft() else stopAutoLeft() end
+end)
+mkMobileBtn(mobFrame, "PLASMA
+RIGHT", 0.01, 0.46, function()
+    Toggles.AutoRight = not Toggles.AutoRight
+    if Toggles.AutoRight then startAutoRight() else stopAutoRight() end
+end)
+
+-- RIGHT BUTTONS
+mkMobileBtn(mobFrame, "FLOAT",       0.82, 0.18, function()
+    Toggles.Float = not Toggles.Float
+    if Toggles.Float then startFloat() else stopFloat() end
+end)
+mkMobileBtn(mobFrame, "UNGRAB",      0.72, 0.30, function()
+    local hum = getHum(); if hum then hum:UnequipTools() end
+end)
+mkMobileBtn(mobFrame, "BAT
+AIMBOT",0.84, 0.30, function()
+    Toggles.BatAimbot = not Toggles.BatAimbot
+    if Toggles.BatAimbot then startAimbot() else stopAimbot() end
+end)
+mkMobileBtn(mobFrame, "TAUNT",       0.72, 0.42, function()
+    local hum = getHum(); if hum then hum:UnequipTools() end
+end)
+mkMobileBtn(mobFrame, "SPINBOT",     0.84, 0.42, function()
+    Toggles.Spinbot = not Toggles.Spinbot
+    if Toggles.Spinbot then startSpinbot() else stopSpinbot() end
+end)
+
 
 print("[ALAM HUB] Loaded! discord.gg/U4XXCxKUm | U = Toggle")
