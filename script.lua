@@ -1,5 +1,4 @@
 -- ALAM HUB | discord.gg/U4XXCxKUm
-local ok,err=pcall(function()
 repeat task.wait()until game:IsLoaded()
 task.wait(1)
 local Pl=game:GetService("Players").LocalPlayer
@@ -422,5 +421,3 @@ if T.Spinbot then startSpin()end
 if T.InstantGrab then startGrab()end
 end)
 print("[ALAM HUB] Loaded! discord.gg/U4XXCxKUm")
-end)
-if not ok then warn("[ALAM HUB] Error: "..tostring(err))end
