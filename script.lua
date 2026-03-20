@@ -399,6 +399,31 @@ local function tpToBrainrot()
     end
 end
 
+
+-- ──────────────────────────────────────────────────────────────
+-- DRAG FUNCTION
+-- ──────────────────────────────────────────────────────────────
+local function makeDraggable(frame, handle)
+    handle = handle or frame
+    local dragging, ds, dp = false, nil, nil
+    handle.InputBegan:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            dragging = true; ds = i.Position; dp = frame.Position
+        end
+    end)
+    handle.InputEnded:Connect(function(i)
+        if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+            dragging = false
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(i)
+        if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
+            local delta = i.Position - ds
+            frame.Position = UDim2.new(dp.X.Scale, dp.X.Offset + delta.X, dp.Y.Scale, dp.Y.Offset + delta.Y)
+        end
+    end)
+end
+
 -- ──────────────────────────────────────────────────────────────
 -- GUI
 -- ──────────────────────────────────────────────────────────────
@@ -876,6 +901,11 @@ alrBtn.MouseButton1Click:Connect(function()
     end
     updateALR()
 end)
+
+
+-- Make all panels draggable
+makeDraggable(rp)
+makeDraggable(iconBtn)
 
 -- TOGGLE GUI (nur großes Fenster, kleines bleibt!)
 iconBtn.MouseButton1Click:Connect(function()
